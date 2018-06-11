@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+    <t t-name="HomePage">
+        <div class="content">
+            <div id="box" class="calendar"></div>
+        </div>
+        <div class="viewForm">
+            <div class="title">
+                <div class="name">
+                    <label>姓名：</label>
+                    <span>范相林</span>
+                    <i class="addIcon"></i>
+                </div>
+            </div>
+            <div class="signData">
+            </div>
+        </div>
+        <div class="bottom">
+            <span id="signBtn" class="sign">签到</span>
+        </div>
+    </t>
+</templates>
