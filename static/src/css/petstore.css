@@ -22,7 +22,7 @@
     border:1px solid transparent;
 }
 .calendar td .active{
-    border:1px solid #eee;
+    border:1px solid #333;
 }
 .calendar{
     width:100%;
