@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="bottom">
-            <span id="signBtn" class="sign">签到</span>
+            <span id="signBtn" class="sign">报工</span>
         </div>
     </t>
 </templates>
