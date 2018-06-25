@@ -14,24 +14,43 @@ class employee_sign(models.Model):
     end_time = fields.Char(string="结束时间")
     project = fields.Many2one("nantian_erp.working_team", string="项目")
     partner_id = fields.Many2one("res.partner", string="客户", domain="[('category','=',u'服务客户')]")
-    unit = fields.Integer(string="时长")
+    unit = fields.Float(string="时长", compute="compute_unit",store=True)
     address = fields.Many2one("opetstore.work_address")
     work_content = fields.Char(string="工作内容")
-    default_sign_id = fields.Many2one("opetstore.default_sign", "sign_id")
-    default = fields.Boolean(string="是否置为默认")
+    # default_sign_id = fields.Many2one("opetstore.default_sign", "sign_id")
+    default = fields.Boolean(string="是否置为默认", default=True)
+
+    @api.multi
+    @api.depends("start_time", "end_time")
+    def compute_unit(self):
+        employee_signs = self.env['opetstore.employee_sign'].search([])
+        for record in employee_signs:
+            startList = record.start_time.split(":")
+            endList = record.end_time.split(":")
+            h = int(endList[0]) - int(startList[0])
+            m1 = (int(endList[1])+ 60 - int(startList[1])) / 60
+            m2 = (int(endList[1])+ 60 - int(startList[1])) % 60
+            if m1 >=1:
+                record.unit = h+float(m2)/60
+            else:
+                record.unit = h-1+float(m2)/60
+
 
     @api.model
     def get_sign_by_date(self,**kwargs):
         # 根据日期获取签到
-        print kwargs
         employee_signs = self.env["opetstore.employee_sign"].search([('date', '=', kwargs.get("date")),('user_id', '=', self.env.uid)])
-        signs = []
+        signs = {"data":[], "unit": False}
+        unit = 0
         for employee_sign in employee_signs:
-            signs.append({"date": employee_sign.date, "user_id": employee_sign.user_id.id,
+            signs["data"].append({"date": employee_sign.date, "user_id": employee_sign.user_id.id,
                           "status": employee_sign.status,"start_time" : employee_sign.start_time,
                           "end_time": employee_sign.end_time, "project": employee_sign.project.id,
                           "partner_id": employee_sign.partner_id.id, "address": employee_sign.address.id,
                           "work_content": employee_sign.work_content, "default": employee_sign.default})
+            unit += employee_sign.unit
+        if unit >= 8:
+            signs["unit"] = True
         return signs
 
     @api.model
@@ -57,31 +76,36 @@ class employee_sign(models.Model):
         # 获取当前月的签到情况
         employee_signs = self.env["opetstore.employee_sign"].search(
                 [('user_id', '=', self.env.uid)])
-        signs = []
+        signs = {}
         for employee_sign in employee_signs:
             dates = employee_sign.date.split("-")
             if str(dates[0]) == str(kwargs.get("year")) and str(int(dates[1])) == str(kwargs.get("month")):
                 if dates[2] not in signs:
-                    signs.append(dates[2])
-        print signs
+                    signs[str(dates[2])] = employee_sign.unit
+                else:
+                    signs[str(dates[2])] += employee_sign.unit
         return signs
 
     @api.model
     def commit(self, **kwargs):
         # 提交按钮
-        old_defaults = self.env["opetstore.default_sign"].search([("user_id","=", self.env.uid)])
-        flag = True
+        # old_defaults = self.env["opetstore.default_sign"].search([("user_id","=", self.env.uid)])
+        # flag = True
+        date = kwargs.get("signList")[0]["date"]
+        old_sign = self.env["opetstore.employee_sign"].search([("user_id","=", self.env.uid),("date","=",date)])
+        if old_sign:
+            old_sign.unlink()
         for data in kwargs.get("signList"):
+            data["default"] = False
             sig_record = self.env["opetstore.employee_sign"].create(data)
-            if data.get("default"):
-                if flag:
-                    if old_defaults:
-                        old_defaults.unlink()
-                    flag = False
-                default_sign_id = self.env["opetstore.default_sign"].create({"user_id": sig_record.user_id.id,
-                                                                             "sign_id": [sig_record]})
-                sig_record.default_sign_id = default_sign_id
-        return "ok"
+        unit = 0
+        new_signs = self.env["opetstore.employee_sign"].search([("user_id", "=", self.env.uid), ("date", "=", date)])
+        for sign in new_signs:
+            unit += sign.unit
+        if unit > 8:
+            return "ok"
+        else:
+            return "false"
 
     @api.model
     def get_user(self):
@@ -93,15 +117,13 @@ class employee_sign(models.Model):
     def get_default_sign(self):
         # 获取默认签到
         signs_list = []
-        default_signs = self.env["opetstore.employee_sign"].search([('default_sign_id', '!=', None),
-                                                                    ('user_id', '=', self.env.uid)])
-        print default_signs
-        for employee_sign in default_signs:
-            signs_list.append({"date": employee_sign.date, "user_id": employee_sign.user_id.id,
-                          "status": employee_sign.status, "start_time": employee_sign.start_time,
-                          "end_time": employee_sign.end_time, "project": employee_sign.project.id,
-                          "partner_id": employee_sign.partner_id.id, "address": employee_sign.address.id,
-                          "work_content": employee_sign.work_content, "default": employee_sign.default})
+        employee_sign = self.env["opetstore.employee_sign"].search([('default', '=', True),
+                                                                  ('user_id', '=', self.env.uid)], limit=1)
+        signs_list.append({"date": employee_sign.date, "user_id": employee_sign.user_id.id,
+                      "status": employee_sign.status, "start_time": employee_sign.start_time,
+                      "end_time": employee_sign.end_time, "project": employee_sign.project.id,
+                      "partner_id": employee_sign.partner_id.id, "address": employee_sign.address.id,
+                      "work_content": employee_sign.work_content, "default": employee_sign.default})
         return signs_list
 
 
@@ -119,9 +141,3 @@ class work_address(models.Model):
             address.append({"id": addr.id, "name": addr.name})
         return address
 
-
-class default_sign(models.Model):
-    _name = "opetstore.default_sign"
-
-    user_id = fields.Many2one("res.users")
-    sign_id = fields.One2many("opetstore.employee_sign", "default_sign_id")

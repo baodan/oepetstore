@@ -69,8 +69,36 @@
             <field name="name">员工报工</field>
             <field name="res_model">opetstore.employee_sign</field>
             <field name="view_type">form</field>
+             <field name="view_id" ref="employee_sign_tree_view"/>
             <field name="view_mode">tree,form</field>
         </record>
+
+        <record model="ir.ui.view" id="employee_default_sign_tree_view">
+            <field name="name">default_employee_sign_tree</field>
+            <field name="model">opetstore.employee_sign</field>
+            <field name="arch" type="xml">
+                <tree string="sign"  editable="top">
+                    <field name="user_id" string="用户" readonly="True"/>
+                    <field name="partner_id" string="客户" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
+                    <field name="project" string="项目" domain="[('partner_id','=',partner_id)]" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
+                    <field name="address" string="类型" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
+                    <field name="start_time" string="开始时间"/>
+                    <field name="end_time" string="结束时间" />
+                    <field name="work_content" string="工作内容" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="employee_default_sign_action" model="ir.actions.act_window">
+            <field name="name">默认设置</field>
+            <field name="res_model">opetstore.employee_sign</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="employee_default_sign_tree_view"/>
+            <field name ="domain">[('user_id','=',uid),("default","!=", 0)]</field>
+        </record>
+        <menuitem id="default_sign" name="默认设置" parent="my_sign_menu" action="employee_default_sign_action"/>
+
         <menuitem id="all_sign" name="所有报工" parent="my_sign_menu" action="employee_sign_action"
                   groups="nantian_erp.group_hr_president,nantian_erp.group_hr_manager,nantian_erp.group_nantian_header,nantian_erp.group_hr_bm_manager"/>
         <menuitem id="project_menu" name="项目管理" parent="sign_manage" action="nantian_erp.nantian_works_manager_action"/>
