@@ -15,6 +15,11 @@ openerp.oepetstore = function(instance, local) {
             this._super(parent);
         },
         start: function () {
+            /*if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+                alert('这是移动端')
+            } else {
+                alert('这是pc端')
+            }*/
             var self = this;
             self.model = new instance.web.Model("opetstore.employee_sign");
             self.modelAddress = new instance.web.Model("opetstore.work_address");
@@ -31,24 +36,43 @@ openerp.oepetstore = function(instance, local) {
                             /*获取当天报工数据和当月报工数据方法*/
                             function getActiveMonth(monthYear,date){
                                 self.model.call("get_sign_by_month",monthYear).then(function(result) {
-                                    let arr = result;
-                                    let testArr = [{date:'12',status:'ok'},{date:'20',status:'false'}];
-                                    Calendar.init(testArr);
+                                    console.log('当月数据:',result);
+                                    let arr = [];
+                                    for(var key in result){
+                                        let obj = {};
+                                        if(key.charAt(0) == '0'){
+                                            obj.date = key.charAt(1);
+                                        }else{
+                                            obj.date = key;
+                                        }
+                                        obj.status = result[key]
+                                        arr.push(obj);
+                                    }
+                                    Calendar.init(arr);
                                     /*请求当天的报工数据*/
                                     self.model.call("get_sign_by_date",date).then(function(result) {
-                                        if(result[0]){
+                                        console.log('当天数据',result);
+                                        if(result.data[0]){
                                             self.$('.signData').html('');
-                                            for(let i = 0;i<result.length;i++){
-                                                self.createHtml(self.selectData,result[i]);
+                                            for(let i = 0;i<result.data.length;i++){
+                                                self.createHtml(self.selectData,result.data[i]);
                                             }
                                             self.$('.addIcon').hide();
                                             self.$('.delete').hide();
                                             self.$('.inputVal').attr('disabled','true');
-                                            $('.bottom span#signBtn').attr('class','upDate').text('修改');
+                                            console.log(date);
+                                            let today = new Date(),onDay = new Date(date.date);
+                                            let time = today.getTime(),activeTime = onDay.getTime();
+                                            if(time - activeTime > 1209600000){
+                                                $('.bottom span#signBtn').attr('class','signed').text('已报工');
+                                            }else{
+                                                $('.bottom span#signBtn').attr('class','upDate').text('修改');
+                                            }
                                         }else{
                                             /*获取默认数据*/
                                             self.$('.signData').html('');
                                             self.model.call("get_default_sign",{}).then(function(result) {
+                                                console.log('默认数据:',result);
                                                 if(result[0]){
                                                     for(let i = 0;i<result.length;i++){
                                                         self.createHtml(self.selectData,result[i]);
@@ -187,7 +211,7 @@ openerp.oepetstore = function(instance, local) {
                                                 }
                                             }
                                             if(dayArr.contains(arr[k][m])){
-                                                if(dayArr.workHour(arr[k][m]) == 'ok'){
+                                                if(dayArr.workHour(arr[k][m]) == 'true'){
                                                     if(arr[k][m] == this.date){
                                                         str += '<td class="red_tbg"><span class="active">' + arr[k][m] + '<i class="signIcon"></i></span></td>';
                                                         continue;
@@ -299,10 +323,10 @@ openerp.oepetstore = function(instance, local) {
                     _this.$(e.currentTarget).find('span').attr('class','active');
                     /*请求当天的报工数据*/
                     this.model.call("get_sign_by_date",{date:date.join('-')}).then(function(result) {
-                        if(result[0]){
+                        if(result.data[0]){
                             _this.$('.signData').html('');
-                            for(let i = 0;i<result.length;i++){
-                                _this.createHtml(_this.selectData,result[i]);
+                            for(let i = 0;i<result.data.length;i++){
+                                _this.createHtml(_this.selectData,result.data[i]);
                             }
                             _this.$('.addIcon').hide();
                             _this.$('.delete').hide();
@@ -416,6 +440,7 @@ openerp.oepetstore = function(instance, local) {
                 }
                 let commitData = {signList:signList};
                 this.model.call("commit",commitData).then(function(result) {
+                    console.log('提交:',result);
                     if(result){
                         let str = '';
                         if(result == 'ok'){

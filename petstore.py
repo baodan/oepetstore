@@ -15,7 +15,7 @@ class employee_sign(models.Model):
     project = fields.Many2one("nantian_erp.working_team", string="项目")
     partner_id = fields.Many2one("res.partner", string="客户", domain="[('category','=',u'服务客户')]")
     unit = fields.Float(string="时长", compute="compute_unit",store=True)
-    address = fields.Many2one("opetstore.work_address")
+    address = fields.Many2one("opetstore.work_address", string="类型")
     work_content = fields.Char(string="工作内容")
     # default_sign_id = fields.Many2one("opetstore.default_sign", "sign_id")
     default = fields.Boolean(string="是否置为默认", default=True)
@@ -84,13 +84,16 @@ class employee_sign(models.Model):
                     signs[str(dates[2])] = employee_sign.unit
                 else:
                     signs[str(dates[2])] += employee_sign.unit
+        for key,value in signs.items():
+            if value <8:
+                signs[key] = "false"
+            else:
+                signs[key] = "true"
         return signs
 
     @api.model
     def commit(self, **kwargs):
         # 提交按钮
-        # old_defaults = self.env["opetstore.default_sign"].search([("user_id","=", self.env.uid)])
-        # flag = True
         date = kwargs.get("signList")[0]["date"]
         old_sign = self.env["opetstore.employee_sign"].search([("user_id","=", self.env.uid),("date","=",date)])
         if old_sign:
@@ -131,7 +134,7 @@ class work_address(models.Model):
     _name = "opetstore.work_address"
     _rec_name = "name"
 
-    name = fields.Char(string="地址名")
+    name = fields.Char(string="类型")
 
     @api.model
     def get_all_work_address(self):
