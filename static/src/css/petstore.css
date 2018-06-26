@@ -5,6 +5,9 @@
 	list-style: none;
 	padding: 0;
 }
+.homePage{
+    min-width:888px;
+}
 /*日历样式*/
 .content{
     padding:40px 40px 0;

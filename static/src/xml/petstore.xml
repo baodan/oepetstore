@@ -2,22 +2,24 @@
 
 <templates xml:space="preserve">
     <t t-name="HomePage">
-        <div class="content">
-            <div id="box" class="calendar"></div>
-        </div>
-        <div class="viewForm">
-            <div class="title">
-                <div class="name">
-                    <label>姓名：</label>
-                    <span></span>
-                    <i class="addIcon"></i>
+        <div class="homePage">
+            <div class="content">
+                <div id="box" class="calendar"></div>
+            </div>
+            <div class="viewForm">
+                <div class="title">
+                    <div class="name">
+                        <label>姓名：</label>
+                        <span></span>
+                        <i class="addIcon"></i>
+                    </div>
+                </div>
+                <div class="signData">
                 </div>
             </div>
-            <div class="signData">
+            <div class="bottom">
+                <span id="signBtn" class="sign">报工</span>
             </div>
-        </div>
-        <div class="bottom">
-            <span id="signBtn" class="sign">报工</span>
         </div>
     </t>
 </templates>
