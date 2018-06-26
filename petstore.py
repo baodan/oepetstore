@@ -78,12 +78,13 @@ class employee_sign(models.Model):
                 [('user_id', '=', self.env.uid)])
         signs = {}
         for employee_sign in employee_signs:
-            dates = employee_sign.date.split("-")
-            if str(dates[0]) == str(kwargs.get("year")) and str(int(dates[1])) == str(kwargs.get("month")):
-                if dates[2] not in signs:
-                    signs[str(dates[2])] = employee_sign.unit
-                else:
-                    signs[str(dates[2])] += employee_sign.unit
+            if employee_sign.date:
+                dates = employee_sign.date.split("-")
+                if str(dates[0]) == str(kwargs.get("year")) and str(int(dates[1])) == str(kwargs.get("month")):
+                    if dates[2] not in signs:
+                        signs[str(dates[2])] = employee_sign.unit
+                    else:
+                        signs[str(dates[2])] += employee_sign.unit
         for key,value in signs.items():
             if value <8:
                 signs[key] = "false"
