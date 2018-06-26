@@ -4,7 +4,7 @@ from openerp import api, fields, models
 class employee_sign(models.Model):
     _name = 'opetstore.employee_sign'
 
-    date = fields.Date(string='创建日期', default=lambda self: fields.datetime.now())
+    date = fields.Date(string='创建日期')
     user_id = fields.Many2one('res.users', default=lambda self: self.env.user, string="创建用户")
     employee_id = fields.Many2one('hr.employee', string="员工")
     exam_user = fields.Many2one('res.users', string="审批人")
