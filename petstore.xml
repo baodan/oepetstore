@@ -60,7 +60,7 @@
                     <field name="address" string="类型" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
                     <field name="start_time" string="开始时间"/>
                     <field name="end_time" string="结束时间" />
-                    <field name="work_content" string="工作内容" />
+                    <!--<field name="work_content" string="工作内容" />-->
                     <!--<field name="status" string="状态" />-->
                 </tree>
             </field>
@@ -85,7 +85,7 @@
                     <field name="address" string="类型" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
                     <field name="start_time" string="开始时间"/>
                     <field name="end_time" string="结束时间" />
-                    <field name="work_content" string="工作内容" />
+                    <!--<field name="work_content" string="工作内容" />-->
                 </tree>
             </field>
         </record>

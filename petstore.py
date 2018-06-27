@@ -40,7 +40,7 @@ class employee_sign(models.Model):
     partner_id = fields.Many2one("res.partner", string="客户", domain="[('category','=',u'服务客户')]")
     unit = fields.Float(string="时长", compute="compute_unit",store=True)
     address = fields.Many2one("opetstore.work_address", string="类型")
-    work_content = fields.Char(string="工作内容")
+    work_content = fields.Text(string="工作内容")
     # default_sign_id = fields.Many2one("opetstore.default_sign", "sign_id")
     default = fields.Boolean(string="是否置为默认", default=True)
 
