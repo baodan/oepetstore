@@ -556,6 +556,7 @@ openerp.oepetstore = function(instance, local) {
                 let preIndex = this.getTimeIndex(this.selectData.timesList,preEnd);
                 eleSign.find('.startTime option').slice(0,preIndex).attr('disabled','disabled');
             }
+
         },
         getTimeIndex:function(arr,item){
             let index = -1;
