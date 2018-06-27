@@ -36,7 +36,6 @@ openerp.oepetstore = function(instance, local) {
                             /*获取当天报工数据和当月报工数据方法*/
                             function getActiveMonth(monthYear,date){
                                 self.model.call("get_sign_by_month",monthYear).then(function(result) {
-                                    console.log('当月数据:',result);
                                     let arr = [];
                                     for(var key in result){
                                         let obj = {};
@@ -51,7 +50,6 @@ openerp.oepetstore = function(instance, local) {
                                     Calendar.init(arr);
                                     /*请求当天的报工数据*/
                                     self.model.call("get_sign_by_date",date).then(function(result) {
-                                        console.log('当天数据',result);
                                         if(result.data[0]){
                                             self.$('.signData').html('');
                                             for(let i = 0;i<result.data.length;i++){
@@ -60,7 +58,6 @@ openerp.oepetstore = function(instance, local) {
                                             self.$('.addIcon').hide();
                                             self.$('.delete').hide();
                                             self.$('.inputVal').attr('disabled','true');
-                                            console.log(date);
                                             let today = new Date(),onDay = new Date(date.date);
                                             let time = today.getTime(),activeTime = onDay.getTime();
                                             if(time - activeTime > 1209600000){
@@ -72,8 +69,7 @@ openerp.oepetstore = function(instance, local) {
                                             /*获取默认数据*/
                                             self.$('.signData').html('');
                                             self.model.call("get_default_sign",{}).then(function(result) {
-                                                console.log('默认数据:',result);
-                                                if(result[0]){
+                                                if(result[0].project){
                                                     for(let i = 0;i<result.length;i++){
                                                         self.createHtml(self.selectData,result[i]);
                                                     }
@@ -340,7 +336,7 @@ openerp.oepetstore = function(instance, local) {
                             _this.$('.signData').html('');
                             /*获取默认数据*/
                             _this.model.call("get_default_sign",{}).then(function(result) {
-                                if(result[0]){
+                                if(result[0].project){
                                     for(let i = 0;i<result.length;i++){
                                         _this.createHtml(_this.selectData,result[i]);
                                     }
@@ -359,15 +355,25 @@ openerp.oepetstore = function(instance, local) {
             let eleSign = self.$('.signData').children("ul:last-child");
             let preEndTime = eleSign.find('.endTime').val();
             let preTimeIndex = this.getTimeIndex(this.selectData.timesList,preEndTime || "09:00")
-            let defaultData = {
-                partner_id:'',
-                project:'',
-                address:'',
-                work_content:'',
-                start_time:preEndTime || '09:00',
-                end_time:this.selectData.timesList[preTimeIndex+17]
-            };
-            this.createHtml(this.selectData,defaultData);
+            /*获取默认数据*/
+            let _this = this;
+            this.model.call("get_default_sign",{}).then(function(result) {
+                if(result[0].project){
+                    for(let i = 0;i<result.length;i++){
+                        _this.createHtml(_this.selectData,result[i]);
+                    }
+                }else{
+                    let defaultData = {
+                        partner_id:'',
+                        project:'',
+                        address:'',
+                        work_content:'',
+                        start_time:preEndTime || '09:00',
+                        end_time:_this.selectData.timesList[preTimeIndex+17]
+                    };
+                    _this.createHtml(_this.selectData,defaultData);
+                }
+            })
         },
         del_btn:function(e){
             this.$(e.currentTarget).parent().parent().parent().remove();
@@ -440,7 +446,6 @@ openerp.oepetstore = function(instance, local) {
                 }
                 let commitData = {signList:signList};
                 this.model.call("commit",commitData).then(function(result) {
-                    console.log('提交:',result);
                     if(result){
                         let str = '';
                         if(result == 'ok'){
@@ -535,17 +540,6 @@ openerp.oepetstore = function(instance, local) {
             eleSign.find('.project').val(defaultData.project);
             eleSign.find('.add').val(defaultData.address);
             eleSign.find('.workCon').val(defaultData.work_content);
-            /*处理获得的时间格式*/
-            //let startTimeArr = defaultData.start_time.split(':'),
-            //    endTimeArr = defaultData.end_time.split(':');
-            //if(startTimeArr[0].length == 1){
-            //    startTimeArr[0] = '0' + startTimeArr[0];
-            //    defaultData.start_time = startTimeArr.join(":");
-            //}
-            //if(endTimeArr[0].length == 1){
-            //    endTimeArr[0] = '0' + endTimeArr[0];
-            //    defaultData.end_time = endTimeArr.join(":");
-            //}
             eleSign.find('.startTime').val(defaultData.start_time);
             eleSign.find('.endTime').val(defaultData.end_time);
             let startIndex = this.getTimeIndex(this.selectData.timesList,defaultData.start_time);
