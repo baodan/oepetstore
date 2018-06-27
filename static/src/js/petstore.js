@@ -536,16 +536,16 @@ openerp.oepetstore = function(instance, local) {
             eleSign.find('.add').val(defaultData.address);
             eleSign.find('.workCon').val(defaultData.work_content);
             /*处理获得的时间格式*/
-            let startTimeArr = defaultData.start_time.split(':'),
-                endTimeArr = defaultData.end_time.split(':');
-            if(startTimeArr[0].length == 1){
-                startTimeArr[0] = '0' + startTimeArr[0];
-                defaultData.start_time = startTimeArr.join(":");
-            }
-            if(endTimeArr[0].length == 1){
-                endTimeArr[0] = '0' + endTimeArr[0];
-                defaultData.end_time = endTimeArr.join(":");
-            }
+            //let startTimeArr = defaultData.start_time.split(':'),
+            //    endTimeArr = defaultData.end_time.split(':');
+            //if(startTimeArr[0].length == 1){
+            //    startTimeArr[0] = '0' + startTimeArr[0];
+            //    defaultData.start_time = startTimeArr.join(":");
+            //}
+            //if(endTimeArr[0].length == 1){
+            //    endTimeArr[0] = '0' + endTimeArr[0];
+            //    defaultData.end_time = endTimeArr.join(":");
+            //}
             eleSign.find('.startTime').val(defaultData.start_time);
             eleSign.find('.endTime').val(defaultData.end_time);
             let startIndex = this.getTimeIndex(this.selectData.timesList,defaultData.start_time);
