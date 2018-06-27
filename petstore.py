@@ -92,7 +92,11 @@ class employee_sign(models.Model):
         project_objs = self.env["nantian_erp.working_team"].search([])
         projects = []
         for project in project_objs:
-            projects.append({"id":project.id, "name": project.name, "partner_id": project.partner_id.id})
+            if project.user_id:
+                name = project.name + "-" + project.user_id.name
+            else:
+                name = project.name
+            projects.append({"id":project.id, "name": name , "partner_id": project.partner_id.id})
         return projects
 
     @api.model
