@@ -28,22 +28,30 @@
             <field name="model">opetstore.employee_sign</field>
             <field name="arch" type="xml">
                 <form string="sign">
-                <sheet>
-                    <group>
-                        <group >
-                            <field name="date" string="日期"/>
-                            <field name="user_id" string="用户" />
-                            <field name="partner_id" string="客户" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
-                            <field name="project" string="项目" domain="[('partner_id','=',partner_id)]" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
-                            <field name="address" string="类型" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
-                        </group>
+                    <header>
+                        <button name="agree" type="object" state='to_examine' string="通过"  class="oe_highlight" groups="nantian_erp.group_nantian_manager"/>
+                        <button name="disagree" type="object" state='to_examine' string="不通过"  class="oe_highlight" groups="nantian_erp.group_nantian_manager"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
                         <group>
-                            <field name="start_time" string="开始时间"/>
-                            <field name="end_time" string="结束时间" />
-                            <field name="work_content" string="工作内容" />
-                            <!--<field name="status" string="状态" />-->
+                            <group >
+                                <field name="date" string="日期"/>
+                                <field name="user_id" string="用户" />
+                                <field name="partner_id" string="客户" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
+                                <field name="project" string="项目" domain="[('partner_id','=',partner_id)]" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
+                                <field name="address" string="类型" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
+                                <field name="exam_user" string="审批人" readonly="True"/>
+                            </group>
+                            <group>
+                                <field name="start_time" string="开始时间"/>
+                                <field name="end_time" string="结束时间" />
+                                <field name="work_content" string="工作内容" />
+                                <field name="department_first" string="一级部门" />
+                                <field name="department_second" string="二级部门" />
+                                <!--<field name="status" string="状态" />-->
+                            </group>
                         </group>
-                    </group>
                 </sheet>
                 </form>
             </field>
@@ -60,8 +68,9 @@
                     <field name="address" string="类型" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
                     <field name="start_time" string="开始时间"/>
                     <field name="end_time" string="结束时间" />
+                    <field name="exam_user" string="审批人" readonly="True"/>
                     <!--<field name="work_content" string="工作内容" />-->
-                    <!--<field name="status" string="状态" />-->
+                    <field name="state" string="状态" />
                 </tree>
             </field>
         </record>
@@ -70,8 +79,8 @@
             <field name="res_model">opetstore.employee_sign</field>
             <field name="view_type">form</field>
              <field name="view_id" ref="employee_sign_tree_view"/>
-            <field name="view_mode">tree,form</field>
-            <field name ="domain">[('date','!=',None)]</field>
+            <field name="view_mode">tree,form,filter</field>
+            <field name ="domain">[('date','!=',None),('state','=','examined')]</field>
         </record>
 
         <record model="ir.ui.view" id="employee_default_sign_tree_view">
@@ -90,6 +99,25 @@
             </field>
         </record>
 
+        <record id="sign_filter_view" model="ir.ui.view">
+            <field name="name">sign_filter</field>
+            <field name="model">opetstore.employee_sign</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="user_id" string="名称"/>
+                    <field name="date" string="日期"/>
+                    <field name="department_first" string="一级部门"/>
+                    <field name="department_second" string="二级部门"/>
+                    <separator/>
+                    <group expand="0" string="分组">
+                        <filter string="二级部门" name="department_second" context="{'group_by':'department_second'}"/>
+                        <filter string="一级部门" name="department_second" context="{'group_by':'department_second'}"/>
+                        <filter string="项目组" name="project" context="{'group_by':'project'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
         <record id="employee_default_sign_action" model="ir.actions.act_window">
             <field name="name">默认设置</field>
             <field name="res_model">opetstore.employee_sign</field>
@@ -98,10 +126,21 @@
             <field name="view_id" ref="employee_default_sign_tree_view"/>
             <field name ="domain">[('user_id','=',uid),("default","!=", 0)]</field>
         </record>
+
+        <record id="employee_to_examine_sign_action" model="ir.actions.act_window">
+            <field name="name">待审批</field>
+            <field name="res_model">opetstore.employee_sign</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="employee_sign_tree_view"/>
+            <field name ="domain">[('exam_user','=',uid)]</field>
+        </record>
         <menuitem id="default_sign" name="默认设置" parent="my_sign_menu" action="employee_default_sign_action"/>
 
         <menuitem id="all_sign" name="所有报工" parent="my_sign_menu" action="employee_sign_action"
                   groups="nantian_erp.group_hr_president,nantian_erp.group_hr_manager,nantian_erp.group_nantian_header,nantian_erp.group_hr_bm_manager,base.group_system"/>
+        <menuitem id="to_examine_sign" name="待审批报工" parent="my_sign_menu" action="employee_to_examine_sign_action"
+                  groups="nantian_erp.group_hr_president,nantian_erp.group_hr_manager,nantian_erp.group_nantian_header,nantian_erp.group_hr_bm_manager,base.group_system,nantian_erp.group_nantian_manager"/>
         <menuitem id="project_menu" name="项目管理" parent="sign_manage" action="nantian_erp.nantian_works_manager_action"/>
     </data>
 </openerp>
