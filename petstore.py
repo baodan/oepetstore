@@ -45,6 +45,7 @@ class employee_sign(models.Model):
     default = fields.Boolean(string="是否置为默认", default=True)
     department_first = fields.Char(related='employee_id.department_first', string="一级部门", store=True)
     department_second = fields.Char(related='employee_id.department_second', store=True, string="二级部门")
+    examine_record_ids = fields.One2many('opetstore.sign_examine', 'sign_id', string="审批记录")
 
     @api.multi
     def agree(self):

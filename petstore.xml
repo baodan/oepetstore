@@ -52,10 +52,100 @@
                                 <!--<field name="status" string="状态" />-->
                             </group>
                         </group>
+                        <group>
+                            <field name="examine_record_ids" readonly = "True">
+                                <tree  editable="bottom">
+                                    <field name="user_id" string="审批人" readonly = "True"/>
+                                    <field name="result" string="审批结果" readonly = "True"/>
+                                    <field name="write_date" string="审批时间" readonly = "True"/>
+                                </tree>
+                            </field>
+                        </group>
                 </sheet>
                 </form>
             </field>
         </record>
+
+
+
+        <record model="ir.ui.view" id="my_sign_form_view">
+            <field name="name">my_sign_form</field>
+            <field name="model">opetstore.employee_sign</field>
+            <field name="arch" type="xml">
+                <form string="sign" create="false"  edit="false">
+                    <sheet>
+                        <group>
+                            <group >
+                                <field name="date" string="日期"/>
+                                <field name="user_id" string="用户" />
+                                <field name="partner_id" string="客户" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
+                                <field name="project" string="项目" domain="[('partner_id','=',partner_id)]" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
+                                <field name="address" string="类型" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
+                                <field name="exam_user" string="审批人" readonly="True"/>
+                            </group>
+                            <group>
+                                <field name="start_time" string="开始时间"/>
+                                <field name="end_time" string="结束时间" />
+                                <field name="work_content" string="工作内容" />
+                                <field name="department_first" string="一级部门" />
+                                <field name="department_second" string="二级部门" />
+                                <!--<field name="status" string="状态" />-->
+                            </group>
+                        </group>
+                        <group>
+                            <field name="examine_record_ids" readonly = "True">
+                                <tree  editable="bottom">
+                                    <field name="user_id" string="审批人" readonly = "True"/>
+                                    <field name="result" string="审批结果" readonly = "True"/>
+                                    <field name="write_date" string="审批时间" readonly = "True"/>
+                                </tree>
+                            </field>
+                        </group>
+                </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="my_sign_tree_view">
+            <field name="name">my sign tree</field>
+            <field name="model">opetstore.employee_sign</field>
+            <field name="arch" type="xml">
+                <tree string="sign" create="false"  edit="false">
+                    <field name="date" string="日期"/>
+                    <field name="user_id" string="用户" />
+                    <field name="partner_id" string="客户" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
+                    <field name="project" string="项目" domain="[('partner_id','=',partner_id)]" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
+                    <field name="address" string="类型" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
+                    <field name="start_time" string="开始时间"/>
+                    <field name="end_time" string="结束时间" />
+                    <field name="exam_user" string="审批人" readonly="True"/>
+                    <field name="state" string="状态" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="my_sign_action_record" model="ir.actions.act_window">
+            <field name="name">报工记录</field>
+            <field name="res_model">opetstore.employee_sign</field>
+            <field name="view_type">form</field>
+             <field name="view_id" ref="employee_sign_tree_view"/>
+            <field name="view_mode">tree,form,filter</field>
+            <field name ="domain">[('user_id','=',uid)]</field>
+        </record>
+
+        <record id="my_sign_form_action_view" model="ir.actions.act_window.view">
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="my_sign_tree_view" />
+            <field name="sequence" eval="1" />
+            <field name="act_window_id" ref="my_sign_action_record" />
+        </record>
+        <record id="my_sign_tree_action_view" model="ir.actions.act_window.view">
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="my_sign_form_view" />
+            <field name="sequence" eval="5" />
+            <field name="act_window_id" ref="my_sign_action_record" />
+        </record>
+
         <record model="ir.ui.view" id="employee_sign_tree_view">
             <field name="name">sign tree</field>
             <field name="model">opetstore.employee_sign</field>
@@ -75,12 +165,12 @@
             </field>
         </record>
         <record id="employee_sign_action" model="ir.actions.act_window">
-            <field name="name">员工报工</field>
+            <field name="name">所有报工</field>
             <field name="res_model">opetstore.employee_sign</field>
             <field name="view_type">form</field>
              <field name="view_id" ref="employee_sign_tree_view"/>
             <field name="view_mode">tree,form,filter</field>
-            <field name ="domain">[('date','!=',None),('state','=','examined')]</field>
+            <field name ="domain">[('date','!=',None)]</field>
         </record>
 
         <record model="ir.ui.view" id="employee_default_sign_tree_view">
@@ -135,6 +225,8 @@
             <field name="view_id" ref="employee_sign_tree_view"/>
             <field name ="domain">[('exam_user','=',uid)]</field>
         </record>
+
+        <menuitem id="my_sign_record" name="报工记录" parent="my_sign_menu" action="my_sign_action_record"/>
         <menuitem id="default_sign" name="默认设置" parent="my_sign_menu" action="employee_default_sign_action"/>
 
         <menuitem id="all_sign" name="所有报工" parent="my_sign_menu" action="employee_sign_action"
