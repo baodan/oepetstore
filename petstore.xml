@@ -173,6 +173,15 @@
             <field name ="domain">[('date','!=',None)]</field>
         </record>
 
+        <record id="my_check_sign_action" model="ir.actions.act_window">
+            <field name="name">我负责的报工</field>
+            <field name="res_model">opetstore.employee_sign</field>
+            <field name="view_type">form</field>
+             <field name="view_id" ref="employee_sign_tree_view"/>
+            <field name="view_mode">tree,form,filter</field>
+            <field name ="domain">[('date','!=',None),('project.user_id','=',uid)]</field>
+        </record>
+
         <record model="ir.ui.view" id="employee_default_sign_tree_view">
             <field name="name">default_employee_sign_tree</field>
             <field name="model">opetstore.employee_sign</field>
@@ -228,7 +237,7 @@
 
         <menuitem id="my_sign_record" name="报工记录" parent="my_sign_menu" action="my_sign_action_record"/>
         <menuitem id="default_sign" name="默认设置" parent="my_sign_menu" action="employee_default_sign_action"/>
-
+        <menuitem id="my_check_sign" name="我负责的报工" parent="my_sign_menu" action="my_check_sign_action"/>    ·
         <menuitem id="all_sign" name="所有报工" parent="my_sign_menu" action="employee_sign_action"
                   groups="nantian_erp.group_hr_president,nantian_erp.group_hr_manager,nantian_erp.group_nantian_header,nantian_erp.group_hr_bm_manager,base.group_system"/>
         <menuitem id="to_examine_sign" name="待审批报工" parent="my_sign_menu" action="employee_to_examine_sign_action"
