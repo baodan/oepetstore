@@ -3,6 +3,7 @@ from openerp import api, fields, models
 
 class employee_sign(models.Model):
     _name = 'opetstore.employee_sign'
+    _inherit = ['ir.needaction_mixin']
 
     date = fields.Date(string='创建日期')
     user_id = fields.Many2one('res.users', default=lambda self: self.env.user, string="创建用户")
@@ -185,6 +186,10 @@ class employee_sign(models.Model):
                       "partner_id": employee_sign.partner_id.id, "address": employee_sign.address.id,
                       "work_content": employee_sign.work_content, "default": employee_sign.default})
         return signs_list
+
+    @api.model
+    def _needaction_domain_get(self):
+        return [('state', '=', 'backed')]
 
 
 class work_address(models.Model):
