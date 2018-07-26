@@ -14,7 +14,7 @@ A wonderful application to sell pet toys.
         "petstore.xml",
         "security/ir.model.access.csv",
     ],
-    'depends' : ['sale_stock'],
+    'depends' : ['nantian_erp'],
     'qweb': ['static/src/xml/*.xml'],
     'application': True,
 }

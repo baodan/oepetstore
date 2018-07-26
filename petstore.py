@@ -1,6 +1,21 @@
 # -*- coding: utf-8 -*-
 from openerp import api, fields, models
 
+class working_team2(models.Model):
+    _name = 'oepetstore.working_team2'
+    # _inherit = ['mail.thread', 'ir.needaction_mixin']
+    # _mail_post_access = 'read'
+    name = fields.Char(string=u"名称")
+    user_id = fields.Many2one('res.users',  string=u'负责人')
+    partner_id = fields.Many2one('res.partner', string=u'客户')
+    employee_ids = fields.Many2many('hr.employee', 'working_team_oep', string=u"工作组成员")
+    need_employee_count = fields.Integer(string=u"所需人数")
+    employee_count = fields.Integer(compute='_count_employees', string=u'现有人数', store=True)
+    @api.depends('employee_ids')
+    def _count_employees(self):
+        for record in self:
+            record.employee_count = len(record.employee_ids)
+
 class employee_sign(models.Model):
     _name = 'opetstore.employee_sign'
     _inherit = ['ir.needaction_mixin']
@@ -37,7 +52,7 @@ class employee_sign(models.Model):
                             ('20:00', '20:00'), ('20:30', '20:30'), ('21:00', '21:00'), ('21:30', '21:30'),
                             ('22:00', '22:00'), ('22:30', '22:30'), ('23:00', '23:00'), ('23:30', '23:30')],
     string="结束时间")
-    project = fields.Many2one("nantian_erp.working_team", string="项目")
+    project = fields.Many2one("oepetstore.working_team2", string="项目")
     partner_id = fields.Many2one("res.partner", string="客户", domain="[('category','=',u'服务客户')]")
     unit = fields.Float(string="时长", compute="compute_unit",store=True)
     address = fields.Many2one("opetstore.work_address", string="类型")
