@@ -130,7 +130,7 @@ class employee_sign(models.Model):
     @api.model
     def get_all_project(self ):
         # 获取所有的项目
-        project_objs = self.env["nantian_erp.working_team"].search([])
+        project_objs = self.env["oepetstore.working_team2"].search([])
         projects = []
         for project in project_objs:
             if project.user_id:
