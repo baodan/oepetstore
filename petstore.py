@@ -52,7 +52,7 @@ class employee_sign(models.Model):
                             ('20:00', '20:00'), ('20:30', '20:30'), ('21:00', '21:00'), ('21:30', '21:30'),
                             ('22:00', '22:00'), ('22:30', '22:30'), ('23:00', '23:00'), ('23:30', '23:30')],
     string="结束时间")
-    project = fields.Text(string="工作内容")
+    project = fields.Many2one("oepetstore.working_team2", string="项目")
     partner_id = fields.Many2one("res.partner", string="客户", domain="[('category','=',u'服务客户')]")
     unit = fields.Float(string="时长", compute="compute_unit",store=True)
     address = fields.Many2one("opetstore.work_address", string="类型")
