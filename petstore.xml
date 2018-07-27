@@ -241,8 +241,8 @@
             <field name="arch" type="xml">
                 <tree string="sign">
                     <field name="name" string="名称"/>
-                    <field name="user_id" string="负责人"/>
-                    <field name="partner_id" string="客户"/>
+                    <field name="user_id" string="负责人" />
+                    <field name="partner_id" string="客户" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
                     <field name="employee_ids" string="工作组成员"/>
                     <field name="need_employee_count" string="所需人数"/>
                     <field name="employee_count" string="现有人数"/>
@@ -250,6 +250,13 @@
             </field>
         </record>
 
+
+        <record id="oep_working_team2_action" model="ir.actions.act_window">
+            <field name="name">项目</field>
+            <field name="res_model">oepetstore.working_team2</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
 
         <record id="action_nantian_erp_pres_sale_tree" model="ir.actions.act_window.view">
             <field name="view_mode">tree</field>
@@ -266,8 +273,8 @@
                     <sheet>
                         <group name="group left">
                         <field name="name" string="名称"/>
-                        <field name="user_id" string="负责人"/>
-                        <field name="partner_id" string="客户"/>
+                        <field name="user_id" string="负责人" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
+                        <field name="partner_id" string="客户" options='{"no_open":True,"no_create":1,"no_create_edit":1}'/>
                         </group>
                         <group name="group right">
                         <field name="need_employee_count" string="所需人数"/>
@@ -283,18 +290,12 @@
             </field>
         </record>
 
+
         <record id="action_nantian_erp_pres_sale_from" model="ir.actions.act_window.view">
             <field name="view_mode">form</field>
             <field name="sequence" eval="11"/>
             <field name="view_id" ref="oep_sign_form_view" />
             <field name="act_window_id" ref="oep_working_team2_action"/>
-        </record>
-
-        <record id="oep_working_team2_action" model="ir.actions.act_window">
-            <field name="name">项目</field>
-            <field name="res_model">oepetstore.working_team2</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
         </record>
 
         <menuitem id="my_sign_record" name="报工记录" parent="my_sign_menu" action="my_sign_action_record"/>
