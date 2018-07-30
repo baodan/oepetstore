@@ -20,7 +20,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
         </record>
-        <menuitem id="sign_manage" name="管理" parent="home_page_sign_menu" groups="nantian_erp.group_hr_president,nantian_erp.group_hr_manager,nantian_erp.group_nantian_header,nantian_erp.group_hr_bm_manager,base.group_system"/>
+        <menuitem id="sign_manage" name="管理" parent="home_page_sign_menu" groups="nantian_erp.group_hr_president,nantian_erp.group_hr_manager,nantian_erp.group_nantian_header,nantian_erp.group_hr_bm_manager,base.group_system,nantian_erp.group_nantian_assistant"/>
         <menuitem id="work_address_menu" name="类型管理" parent="sign_manage" action="work_address_action"/>
 
         <record model="ir.ui.view" id="employee_sign_form_view">
