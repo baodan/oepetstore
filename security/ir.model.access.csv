@@ -4,3 +4,4 @@ hr_employee_all_workaddress,hr_employee workaddress all,model_opetstore_work_add
 opetstore_examine,opetstore_examine all,model_opetstore_sign_examine,,1,1,1,1
 opetstore_oep_working_team2,opetstore.working_team2,model_oepetstore_working_team2,nantian_erp.group_nantian_boss,1,1,1,1
 opetstore_oep_hr_team2,opetstore.hr_team2,model_oepetstore_working_team2,nantian_erp.group_hr_manager,1,1,1,1
+opetstore_oep_working_team,opetstore.working_team,model_oepetstore_working_team2,,1,0,0,0
