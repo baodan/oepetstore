@@ -170,7 +170,7 @@ class employee_sign(models.Model):
             old_sign.unlink()
         for data in kwargs.get("signList"):
             data["default"] = False
-            project = self.env["nantian_erp.working_team"].search([("id","=", data["project"])])
+            project = self.env["oepetstore.working_team2"].search([("id","=", data["project"])])
             if project:
                 data["exam_user"] = project.user_id.id
             sig_record = self.env["opetstore.employee_sign"].create(data)
