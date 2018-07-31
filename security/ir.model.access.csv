@@ -1,5 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-hr_employee_all,hr_employee all,model_opetstore_employee_sign,,1,1,1,1
+hr_employee_all,hr_employee all,model_opetstore_employee_sign,,1,1,1,0
+hr_employee_all2,hr_employee1,model_opetstore_employee_sign,nantian_erp.group_nantian_boss,1,1,1,1
+hr_employee_all3,hr_employee2,model_opetstore_employee_sign,nantian_erp.group_hr_manager,1,1,1,1
+hr_employee_all4,hr_employee3,model_opetstore_employee_sign,nantian_erp.group_nantian_assistant,1,1,1,1
 hr_employee_all_workaddress,hr_employee workaddress all,model_opetstore_work_address,,1,1,1,1
 opetstore_examine,opetstore_examine all,model_opetstore_sign_examine,,1,1,1,1
 opetstore_oep_working_team2,opetstore.working_team2,model_oepetstore_working_team2,nantian_erp.group_nantian_boss,1,1,1,1
