@@ -112,7 +112,8 @@ class employee_sign(models.Model):
                           "state": employee_sign.state,"start_time" : employee_sign.start_time,
                           "end_time": employee_sign.end_time, "project": employee_sign.project.id,
                           "partner_id": employee_sign.partner_id.id, "address": employee_sign.address.id,
-                          "work_content": employee_sign.work_content, "default": employee_sign.default})
+                          "work_content": employee_sign.work_content, "default": employee_sign.default,
+                          "id": employee_sign.id})
             unit += employee_sign.unit
         if unit >= 8:
             signs["unit"] = True
@@ -165,15 +166,23 @@ class employee_sign(models.Model):
     def commit(self, **kwargs):
         # 提交按钮
         date = kwargs.get("signList")[0]["date"]
-        old_sign = self.env["opetstore.employee_sign"].search([("user_id","=", self.env.uid),("date","=",date)])
-        if old_sign:
-            old_sign.unlink()
+
+        # old_sign = self.env["opetstore.employee_sign"].search([("user_id","=", self.env.uid),("date","=",date)])
+        # if old_sign:
+        #     old_sign.unlink()
         for data in kwargs.get("signList"):
             data["default"] = False
             project = self.env["oepetstore.working_team2"].search([("id","=", data["project"])])
             if project:
                 data["exam_user"] = project.user_id.id
-            sig_record = self.env["opetstore.employee_sign"].create(data)
+            id=data.get("id")
+            if id:
+                bg = self.env["opetstore.employee_sign"].search([("id", "=", id),
+                                                                 ("state", "=", "to_examine")])
+                if bg:
+                    bg.write(data)
+            else:
+                sig_record = self.env["opetstore.employee_sign"].create(data)
         unit = 0
         new_signs = self.env["opetstore.employee_sign"].search([("user_id", "=", self.env.uid), ("date", "=", date)])
         for sign in new_signs:
@@ -199,7 +208,8 @@ class employee_sign(models.Model):
                       "state": employee_sign.state, "start_time": employee_sign.start_time,
                       "end_time": employee_sign.end_time, "project": employee_sign.project.id,
                       "partner_id": employee_sign.partner_id.id, "address": employee_sign.address.id,
-                      "work_content": employee_sign.work_content, "default": employee_sign.default})
+                      "work_content": employee_sign.work_content, "default": employee_sign.default,
+                      })
         return signs_list
 
     @api.model

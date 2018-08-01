@@ -11,6 +11,7 @@ openerp.oepetstore = function(instance, local) {
             addressList:[]
         },
         userData:null,
+        signDataIds:[],
         init: function(parent) {
             this._super(parent);
         },
@@ -49,10 +50,12 @@ openerp.oepetstore = function(instance, local) {
                                     }
                                     Calendar.init(arr);
                                     /*请求当天的报工数据*/
+                                    self.signDataIds = [];
                                     self.model.call("get_sign_by_date",date).then(function(result) {
                                         if(result.data[0]){
                                             self.$('.signData').html('');
                                             for(let i = 0;i<result.data.length;i++){
+                                                self.signDataIds.push(result.data[i].id);
                                                 self.createHtml(self.selectData,result.data[i]);
                                             }
                                             self.$('.addIcon').hide();
@@ -297,6 +300,7 @@ openerp.oepetstore = function(instance, local) {
             "click .upDate":"upDateBtn"
         },
         td_clicked:function(e){
+            this.signDataIds = [];
             let _this = this,
                 isDate = this.$(e.currentTarget).attr('class'),
                 today = new Date(),
@@ -318,10 +322,12 @@ openerp.oepetstore = function(instance, local) {
                     _this.$('span').removeClass('active');
                     _this.$(e.currentTarget).find('span').attr('class','active');
                     /*请求当天的报工数据*/
+                    this.signDataIds = [];
                     this.model.call("get_sign_by_date",{date:date.join('-')}).then(function(result) {
                         if(result.data[0]){
                             _this.$('.signData').html('');
                             for(let i = 0;i<result.data.length;i++){
+                                _this.signDataIds.push(result.data[i].id);
                                 _this.createHtml(_this.selectData,result.data[i]);
                             }
                             _this.$('.addIcon').hide();
@@ -424,11 +430,21 @@ openerp.oepetstore = function(instance, local) {
                 obj.end_time = this.$(eleArr[i]).find('.endTime').val();
                 obj.address = this.$(eleArr[i]).find('.add').val();
                 obj.work_content = this.$(eleArr[i]).find('.workCon').val();
+                if(this.signDataIds[i]){
+                    obj.id = this.signDataIds[i];
+                }
                 signList.push(obj);
             }
             if(signList[0]){
                 for(let i = 0;i<signList.length;i++){
-                    if(signList[i].end_time === null){
+                    if(signList[i].start_time === null){
+                        var $dialog=new instance.web.Dialog(null,{
+                            size: 'small',
+                            dialogClass: 'oe_act_window',
+                            title: _t("提示")
+                        },'<h3 style="text-align:center;">请检查开始时间!</h3>').open();
+                        return false;
+                    }else if(signList[i].end_time === null){
                         var $dialog=new instance.web.Dialog(null,{
                             size: 'small',
                             dialogClass: 'oe_act_window',
@@ -471,7 +487,7 @@ openerp.oepetstore = function(instance, local) {
         },
         upDateBtn: function(e){
             self.$('.addIcon').show();
-            self.$('.delete').show();
+            // self.$('.delete').show();
             self.$('.inputVal').removeAttr('disabled');
             $('.bottom span#signBtn').attr('class','sign').text('报工');
         },

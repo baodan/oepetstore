@@ -12,6 +12,7 @@ A wonderful application to sell pet toys.
         """,
     'data': [
         "petstore.xml",
+        # "security/oeptstore_security.xml",
         "security/ir.model.access.csv",
     ],
     'depends' : ['nantian_erp'],
