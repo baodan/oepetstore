@@ -16,6 +16,16 @@ class working_team2(models.Model):
         for record in self:
             record.employee_count = len(record.employee_ids)
 
+    @api.multi
+    def auto_add_corn_manager(self):
+        works = self.env['oepetstore.working_team2'].search([])
+        work_team_manager_id = self.env['ir.model.data'].search(
+            [('name', '=', 'group_nantian_manager'), ('module', '=', 'nantian_erp')]).res_id
+        group_manager_id = self.env['res.groups'].search([('id', '=', work_team_manager_id)])
+        for work in works:
+            if work.user_id not in group_manager_id.users:
+                group_manager_id.users |= work.user_id
+
 class employee_sign(models.Model):
     _name = 'opetstore.employee_sign'
     _inherit = ['ir.needaction_mixin']
