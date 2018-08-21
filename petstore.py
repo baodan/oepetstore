@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models
+from openerp import api, fields, models,exceptions
 
 class working_team2(models.Model):
     _name = 'oepetstore.working_team2'
@@ -176,23 +176,46 @@ class employee_sign(models.Model):
     def commit(self, **kwargs):
         # 提交按钮
         date = kwargs.get("signList")[0]["date"]
+        last_time=kwargs.get("signList")[-1]["end_time"]
 
-        # old_sign = self.env["opetstore.employee_sign"].search([("user_id","=", self.env.uid),("date","=",date)])
-        # if old_sign:
-        #     old_sign.unlink()
+
+         #     raise exceptions.Warning('时间错误!!!')
         for data in kwargs.get("signList"):
             data["default"] = False
-            project = self.env["oepetstore.working_team2"].search([("id","=", data["project"])])
+            work_dict = {}
+            work_dict["start_time"] = data["start_time"]
+            work_dict["end_time"] = data["end_time"]
+
+
+            project = self.env["oepetstore.working_team2"].search([("id", "=", data["project"])])
             if project:
                 data["exam_user"] = project.user_id.id
-            id=data.get("id")
+            id = data.get("id")
+            work_signs = self.env["opetstore.employee_sign"].search(
+                [("user_id", "=", self.env.uid), ("date", "=", date)])
             if id:
                 bg = self.env["opetstore.employee_sign"].search([("id", "=", id),
                                                                  ("state", "=", "to_examine")])
                 if bg:
                     bg.write(data)
             else:
+                for work in work_signs:
+                    if data["start_time"] == work.start_time or data["end_time"] == work.end_time:
+                        raise exceptions.Warning('点击速度太快!!!')
                 sig_record = self.env["opetstore.employee_sign"].create(data)
+        work_signs = self.env["opetstore.employee_sign"].search(
+            [("user_id", "=", self.env.uid), ("date", "=", date)])
+        db_list = []
+        for work in work_signs:
+            db_dict = {}
+            db_dict["start_time"] = work.start_time
+            db_dict["end_time"] = work.end_time
+            db_list.append(db_dict)
+        if len(db_list) > 1:
+            for i in range(len(db_list)):
+                for j in range(1+i, len(db_list)):
+                    if db_list[i]["start_time"] < db_list[j]["end_time"] and db_list[i]["end_time"] > db_list[j]["start_time"]:
+                        raise exceptions.Warning('时间段重复!!!')
         unit = 0
         new_signs = self.env["opetstore.employee_sign"].search([("user_id", "=", self.env.uid), ("date", "=", date)])
         for sign in new_signs:

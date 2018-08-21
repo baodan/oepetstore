@@ -469,12 +469,34 @@ openerp.oepetstore = function(instance, local) {
                         }else{
                             str = `<i class="signIcon undone"></i>`
                         }
+                        _this.signDataIds = [];
+                        _this.model.call("get_sign_by_date",{date:commitData.signList[0].date}).then(function(res) {
+                            if(res.data[0]){
+                                _this.$('.signData').html('');
+                                for(let i = 0;i<res.data.length;i++){
+                                    _this.signDataIds.push(res.data[i].id);
+                                    _this.createHtml(_this.selectData,res.data[i]);
+                                }
+                                _this.$('.active').parent().addClass('red_tbg').find('span').find('i').remove();
+                                $(str).appendTo(_this.$('.active').parent().addClass('red_tbg').find('span'));
+                                _this.$('.addIcon').hide();
+                                _this.$('.delete').hide();
+                                _this.$('.inputVal').attr('disabled','true');
+                                $('.bottom span#signBtn').attr('class','upDate').text('修改');
+                            }
+                        });
+                        /*let str = '';
+                        if(result == 'ok'){
+                            str = `<i class="signIcon"></i>`;
+                        }else{
+                            str = `<i class="signIcon undone"></i>`
+                        }
                         _this.$('.active').parent().addClass('red_tbg').find('span').find('i').remove();
                         $(str).appendTo(_this.$('.active').parent().addClass('red_tbg').find('span'));
                         _this.$('.addIcon').hide();
                         _this.$('.delete').hide();
                         _this.$('.inputVal').attr('disabled','true');
-                        _this.$(e.currentTarget).attr('class','upDate').text('修改');
+                        _this.$(e.currentTarget).attr('class','upDate').text('修改');*/
                     }
                 });
             }else{
