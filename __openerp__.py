@@ -2,7 +2,7 @@
     'name' : 'OpenERP Pet Store',
     'version': '1.0',
     'summary': 'Sell pet toys',
-    'category': 'Tools',
+    'category': 'pet_store',
     'description':
         """
 OpenERP Pet Store
@@ -11,9 +11,9 @@ OpenERP Pet Store
 A wonderful application to sell pet toys.
         """,
     'data': [
-        "petstore.xml",
-        # "security/oeptstore_security.xml",
+        "security/oeptstore_security.xml",
         "security/ir.model.access.csv",
+        "petstore_view.xml",
         "manager_corn.xml",
     ],
     'depends' : ['nantian_erp'],

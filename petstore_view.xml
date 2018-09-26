@@ -318,13 +318,26 @@
             <field name="act_window_id" ref="oep_working_team2_action"/>
         </record>
 
+        <record model="ir.actions.act_window" id="oepetstore_admin_action">
+            <field name="name">报工管理员</field>
+            <field name="res_model">res.groups</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('category_id','=',51)]</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Create the first group
+                </p>
+            </field>
+        </record>
+
         <menuitem id="my_sign_record" name="报工记录" parent="my_sign_menu" action="my_sign_action_record"/>
         <menuitem id="default_sign" name="默认设置" parent="my_sign_menu" action="employee_default_sign_action"/>
         <menuitem id="my_check_sign" name="我负责的报工" parent="my_sign_menu" action="my_check_sign_action"/>    ·
         <menuitem id="all_sign" name="所有报工" parent="my_sign_menu" action="employee_sign_action"
-                  groups="nantian_erp.group_hr_president,nantian_erp.group_hr_manager,nantian_erp.group_nantian_header,nantian_erp.group_hr_bm_manager,base.group_system"/>
+                  groups="oepetstore.oepetstore_admin,nantian_erp.group_hr_president,nantian_erp.group_hr_manager,nantian_erp.group_nantian_header,nantian_erp.group_hr_bm_manager,base.group_system"/>
         <menuitem id="to_examine_sign" name="待审批报工" parent="my_sign_menu" action="employee_to_examine_sign_action"
                   groups="nantian_erp.group_hr_president,nantian_erp.group_hr_manager,nantian_erp.group_nantian_header,nantian_erp.group_hr_bm_manager,base.group_system,nantian_erp.group_nantian_manager"/>
         <menuitem id="project_menu" name="项目管理" parent="sign_manage" action="oep_working_team2_action"/>
+        <menuitem id="admin_menu" name="报工管理员" parent="sign_manage" action="oepetstore_admin_action"/>
     </data>
 </openerp>

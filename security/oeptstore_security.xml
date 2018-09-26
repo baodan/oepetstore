@@ -1,31 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
 <data noupdate="0">
-
-
-
-
-
-
-    <record id="oeptstore_user_rule" model="ir.rule">
-        <field name="name">普通用户报工删除</field>
-        <field name="model_id" ref="model_opetstore_employee_sign"/>
-        <field name="domain_force">[('state','!=',"to_examine")]</field>
-        <!--<field name="groups" eval="[(4,ref('nantian_erp.group_hr_recruitment'))]"/>-->
-        <field name="perm_write" eval="1"/>
-        <field name="perm_read" eval="1"/>
-        <field name="perm_create" eval="1"/>
-        <field name="perm_unlink" eval="1"/>
+    <record model="res.groups" id="base.group_user">
+        <field name="comment">the user will be able to manage his own human resources stuff (leave request, timesheets, ...), if he is linked to an employee in the system.</field>
     </record>
-     <record id="oeptstore_user_rule_supplement" model="ir.rule">
-        <field name="name">普通用户报工删除补充</field>
-        <field name="model_id" ref="model_opetstore_employee_sign"/>
-        <field name="domain_force">[('state','!=',"to_examine")]</field>
-        <!--<field name="groups" eval="[(4,ref('nantian_erp.group_hr_president_assistant'))]"/>-->
-        <field name="perm_write" eval="1"/>
-        <field name="perm_read" eval="1"/>
-        <field name="perm_create" eval="1"/>
-        <field name="perm_unlink" eval="0"/>
+    <record model="res.groups" id="oepetstore_admin">
+        <field name="name">报工管理员</field>
+        <field name="category_id" ref="base.module_category_pet_store"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">the user will be able to manage oepetstore in the system.</field>
     </record>
 
     </data>
