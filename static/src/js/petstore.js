@@ -146,7 +146,7 @@ openerp.oepetstore = function(instance, local) {
                                 Calendar.prototype.getLen = function() {
                                     var month = this.month;
                                     if(month == 2) {
-                                        if(this.isLeap) {
+                                        if(this.isLeap()) {
                                             return 29;
                                         }else {
                                             return 28;
